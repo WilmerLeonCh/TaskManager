@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: task_manager_dck
+    image: postgres:16.0-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${TASK_MANAGER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${TASK_MANAGER_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${TASK_MANAGER_POSTGRES_DB}
+    ports:
+      - "5410:5432"
