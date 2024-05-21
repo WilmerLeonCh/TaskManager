@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/TaskManager/config"
+	tasks "github.com/TaskManager/internal"
 )
 
 var Db *gorm.DB
@@ -39,4 +40,11 @@ func NewConnectionPostgres() error {
 
 func BuildDSNPostgres(host, port, user, password, dbname string) string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+}
+
+func Migration() error {
+	if errMigrate := Db.AutoMigrate(&tasks.MTask{}); errMigrate != nil {
+		return errMigrate
+	}
+	return nil
 }
