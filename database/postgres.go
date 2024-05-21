@@ -2,10 +2,10 @@ package database
 
 import (
 	"fmt"
-	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/TaskManager/config"
 	tasks "github.com/TaskManager/internal"
@@ -22,7 +22,9 @@ func NewConnectionPostgres() error {
 		cfg.TaskManagerPostgresPassword,
 		cfg.TaskManagerPostgresDB,
 	)
-	conn, errConn := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	conn, errConn := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if errConn != nil {
 		return fmt.Errorf("failed to open connection to database: %w", errConn)
 	}
@@ -34,7 +36,6 @@ func NewConnectionPostgres() error {
 		return fmt.Errorf("failed to ping database: %w", errPing)
 	}
 	Db = conn
-	log.Println("Connected to database successfully!")
 	return nil
 }
 
