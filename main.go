@@ -1,14 +1,13 @@
 package main
 
-import "github.com/TaskManager/database"
+import (
+	"github.com/TaskManager/cmd"
+	"github.com/TaskManager/database"
+	"github.com/TaskManager/utils"
+)
 
 func main() {
-	err := database.NewConnectionPostgres()
-	if err != nil {
-		return
-	}
-	errMigration := database.Migration()
-	if errMigration != nil {
-		return
-	}
+	utils.Throw(database.NewConnectionPostgres())
+	utils.Throw(database.Migration())
+	cmd.Execute(database.Db)
 }

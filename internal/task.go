@@ -24,11 +24,20 @@ func GetAll(db *gorm.DB) []MTask {
 
 func GetById(db *gorm.DB, id int) *MTask {
 	var task MTask
-	db.First(&task, id)
+	res := db.First(&task, id)
+	if res.RowsAffected == 0 {
+		return nil
+	}
 	return &task
 }
 
 func DeleteById(db *gorm.DB, id int) {
+	var taskToDelete MTask
+	// verify if the task exists
+	existTask := db.First(&taskToDelete, id)
+	if existTask.Error != nil {
+		panic(existTask.Error)
+	}
 	res := db.Delete(&MTask{}, id)
 	if res.Error != nil {
 		panic(res.Error)
