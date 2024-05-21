@@ -1,9 +1,11 @@
 package main
 
-import "github.com/TaskManager/database"
+import (
+	"github.com/TaskManager/database"
+)
 
 func main() {
-	err := database.NewConnectionPostgres("host=localhost user=r00t password=passw0rd dbname=task_manager_db port=5410 sslmode=disable TimeZone=America/Lima")
+	err := database.NewConnectionPostgres()
 	if err != nil {
 		return
 	}

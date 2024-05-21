@@ -6,11 +6,21 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/TaskManager/config"
 )
 
 var Db *gorm.DB
 
-func NewConnectionPostgres(dsn string) error {
+func NewConnectionPostgres() error {
+	cfg := config.Parsed
+	dsn := BuildDSNPostgres(
+		cfg.TaskManagerPostgresHost,
+		cfg.TaskManagerPostgresPort,
+		cfg.TaskManagerPostgresUser,
+		cfg.TaskManagerPostgresPassword,
+		cfg.TaskManagerPostgresDB,
+	)
 	conn, errConn := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if errConn != nil {
 		return fmt.Errorf("failed to open connection to database: %w", errConn)
@@ -25,4 +35,8 @@ func NewConnectionPostgres(dsn string) error {
 	Db = conn
 	log.Println("Connected to database successfully!")
 	return nil
+}
+
+func BuildDSNPostgres(host, port, user, password, dbname string) string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 }
