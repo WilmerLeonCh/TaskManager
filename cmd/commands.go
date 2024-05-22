@@ -4,26 +4,23 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 
 	tasks "github.com/TaskManager/internal"
+	UIAddForm "github.com/TaskManager/ui/add-form"
 	"github.com/TaskManager/utils"
 )
 
 func Execute(db *gorm.DB) {
 	var cmdAdd = &cobra.Command{
-		Use:   "add [string]",
+		Use:   "add",
 		Short: "Add a new task to your task list",
 		Long:  "Add a new task to your task list. The task will be marked as not completed by default.",
-		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			var task = tasks.MTask{
-				Name: strings.Join(args, " "),
-			}
-			newTask := tasks.Add(db, task)
+			formTask := UIAddForm.Create()
+			newTask := tasks.Add(db, formTask)
 			fmt.Printf("▓ Task added: %s (#%d)\n", newTask.Name, newTask.ID)
 		},
 	}
