@@ -9,5 +9,5 @@ import (
 func main() {
 	utils.Throw(database.NewConnectionPostgres())
 	utils.Throw(database.Migration())
-	cmd.Execute(database.Db)
+	cmd.Execute()
 }

@@ -1,6 +1,7 @@
-package UIAddForm
+package UIUpdateForm
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -19,8 +20,8 @@ var (
 	placeholderStyle = lipgloss.NewStyle().Foreground(darkGray)
 )
 
-func Create() tasks.MTask {
-	bubble := tea.NewProgram(initialModel())
+func Create(existedTask tasks.MTask) tasks.MTask {
+	bubble := tea.NewProgram(initialModel(existedTask))
 	utils.Must(bubble.Run())
 	return formTask
 }
@@ -36,10 +37,11 @@ const (
 	description
 )
 
-func initialModel() model {
+func initialModel(existedTask tasks.MTask) model {
+	formTask = existedTask
 	var inputs = make([]textinput.Model, 2)
 	inputs[name] = textinput.New()
-	inputs[name].Placeholder = "I have to do ..."
+	inputs[name].Placeholder = fmt.Sprintf("previous: %s", existedTask.Name)
 	inputs[name].PlaceholderStyle = placeholderStyle
 	inputs[name].Focus()
 	inputs[name].CharLimit = 20
@@ -47,7 +49,7 @@ func initialModel() model {
 	inputs[name].Validate = nameValidator
 
 	inputs[description] = textinput.New()
-	inputs[description].Placeholder = "Why, where, when ..."
+	inputs[description].Placeholder = fmt.Sprintf("previous: %s", existedTask.Description)
 	inputs[description].PlaceholderStyle = placeholderStyle
 	inputs[description].CharLimit = 40
 	inputs[description].Width = 50
