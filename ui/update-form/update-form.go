@@ -6,19 +6,13 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 
 	tasks "github.com/TaskManager/internal"
+	"github.com/TaskManager/ui"
 	"github.com/TaskManager/utils"
 )
 
-var (
-	formTask         = &tasks.MTask{}
-	violet           = lipgloss.Color("57")
-	darkGray         = lipgloss.Color("#767676")
-	promptStyle      = lipgloss.NewStyle().Background(violet).Foreground(lipgloss.Color("229"))
-	placeholderStyle = lipgloss.NewStyle().Foreground(darkGray)
-)
+var formTask = &tasks.MTask{}
 
 func Create(existedTask tasks.MTask) *tasks.MTask {
 	bubble := tea.NewProgram(initialModel(existedTask))
@@ -42,14 +36,14 @@ func initialModel(existedTask tasks.MTask) model {
 	var inputs = make([]textinput.Model, 2)
 	inputs[name] = textinput.New()
 	inputs[name].Placeholder = fmt.Sprintf("prev: %s", existedTask.Name)
-	inputs[name].PlaceholderStyle = placeholderStyle
+	inputs[name].PlaceholderStyle = ui.PlaceholderStyle
 	inputs[name].Focus()
 	inputs[name].CharLimit = 20
 	inputs[name].Width = 50
 
 	inputs[description] = textinput.New()
 	inputs[description].Placeholder = fmt.Sprintf("prev: %s", existedTask.Description)
-	inputs[description].PlaceholderStyle = placeholderStyle
+	inputs[description].PlaceholderStyle = ui.PlaceholderStyle
 	inputs[description].CharLimit = 40
 	inputs[description].Width = 50
 
@@ -114,11 +108,11 @@ func prevInput(m model) int {
 
 func (m model) View() string {
 	var b strings.Builder
-	b.WriteString(promptStyle.Width(m.inputs[name].Width).Render(" Name: "))
+	b.WriteString(ui.PromptStyle.Width(m.inputs[name].Width).Render(" Name: "))
 	b.WriteRune('\n')
 	b.WriteString(m.inputs[name].View())
 	b.WriteRune('\n')
-	b.WriteString(promptStyle.Width(m.inputs[description].Width).Render(" Description: "))
+	b.WriteString(ui.PromptStyle.Width(m.inputs[description].Width).Render(" Description: "))
 	b.WriteRune('\n')
 	b.WriteString(m.inputs[description].View())
 	b.WriteRune('\n')
