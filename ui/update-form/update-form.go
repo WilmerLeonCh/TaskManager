@@ -41,35 +41,23 @@ func initialModel(existedTask tasks.MTask) model {
 	formTask = &existedTask
 	var inputs = make([]textinput.Model, 2)
 	inputs[name] = textinput.New()
-	inputs[name].Placeholder = fmt.Sprintf("previous: %s", existedTask.Name)
+	inputs[name].Placeholder = fmt.Sprintf("prev: %s", existedTask.Name)
 	inputs[name].PlaceholderStyle = placeholderStyle
 	inputs[name].Focus()
 	inputs[name].CharLimit = 20
 	inputs[name].Width = 50
-	inputs[name].Validate = nameValidator
 
 	inputs[description] = textinput.New()
-	inputs[description].Placeholder = fmt.Sprintf("previous: %s", existedTask.Description)
+	inputs[description].Placeholder = fmt.Sprintf("prev: %s", existedTask.Description)
 	inputs[description].PlaceholderStyle = placeholderStyle
 	inputs[description].CharLimit = 40
 	inputs[description].Width = 50
-	inputs[description].Validate = descriptionValidator
 
 	return model{
 		inputs: inputs,
 		focus:  0,
 		err:    nil,
 	}
-}
-
-func nameValidator(s string) error {
-	formTask.Name = s
-	return nil
-}
-
-func descriptionValidator(s string) error {
-	formTask.Description = s
-	return nil
 }
 
 func (m model) Init() tea.Cmd {
@@ -103,7 +91,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	for i := range m.inputs {
 		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
 	}
+	updateFormTask(m)
 	return m, tea.Batch(cmds...)
+}
+
+func updateFormTask(m model) {
+	formTask.Name = m.inputs[name].Value()
+	formTask.Description = m.inputs[description].Value()
 }
 
 func nextInput(m model) int {
