@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	formTask         = tasks.MTask{}
+	formTask         = &tasks.MTask{}
 	violet           = lipgloss.Color("57")
 	darkGray         = lipgloss.Color("#767676")
 	promptStyle      = lipgloss.NewStyle().Background(violet).Foreground(lipgloss.Color("229"))
 	placeholderStyle = lipgloss.NewStyle().Foreground(darkGray)
 )
 
-func Create(existedTask tasks.MTask) tasks.MTask {
+func Create(existedTask tasks.MTask) *tasks.MTask {
 	bubble := tea.NewProgram(initialModel(existedTask))
 	utils.Must(bubble.Run())
 	return formTask
@@ -38,7 +38,7 @@ const (
 )
 
 func initialModel(existedTask tasks.MTask) model {
-	formTask = existedTask
+	formTask = &existedTask
 	var inputs = make([]textinput.Model, 2)
 	inputs[name] = textinput.New()
 	inputs[name].Placeholder = fmt.Sprintf("previous: %s", existedTask.Name)
@@ -87,6 +87,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.focus = nextInput(m)
 		case "ctrl+c", "esc":
+			formTask = nil
 			return m, tea.Quit
 		case "tab", "down":
 			m.focus = nextInput(m)

@@ -22,6 +22,10 @@ type FnCobra func(cmd *cobra.Command, args []string)
 func AddTask() FnCobra {
 	return func(_ *cobra.Command, _ []string) {
 		formTask := UIAddForm.Create()
+		if formTask == nil {
+			UIMessageText.Create(fmt.Sprint("Canceled\n"))
+			return
+		}
 		newTask := tasks.Add(database.Db, formTask)
 		UIMessageText.Create(fmt.Sprintf("Task added: %s (#%d)\n", newTask.Name, newTask.ID))
 	}
@@ -31,7 +35,7 @@ func ListTasks() FnCobra {
 	return func(_ *cobra.Command, _ []string) {
 		allTasks := tasks.GetAll(database.Db)
 		if len(allTasks) == 0 {
-			UIMessageText.Create(fmt.Sprintf("No tasks found"))
+			UIMessageText.Create(fmt.Sprint("No tasks found\n"))
 			return
 		}
 		columns := []table.Column{
@@ -59,7 +63,7 @@ func DetailsTask() FnCobra {
 		id := utils.Must(strconv.Atoi(args[0]))
 		task := tasks.GetById(database.Db, id)
 		if task == nil {
-			UIMessageText.Create(fmt.Sprintf("Task not found\n"))
+			UIMessageText.Create(fmt.Sprint("Task not found\n"))
 			return
 		}
 		UIDetailsList.Create(*task)
@@ -71,10 +75,14 @@ func UpdateTask() FnCobra {
 		id := utils.Must(strconv.Atoi(args[0]))
 		task := tasks.GetById(database.Db, id)
 		if task == nil {
-			UIMessageText.Create(fmt.Sprintf("Task not found\n"))
+			UIMessageText.Create(fmt.Sprint("Task not found\n"))
 			return
 		}
 		taskForm := UIUpdateForm.Create(*task)
+		if taskForm == nil {
+			UIMessageText.Create(fmt.Sprint("Canceled\n"))
+			return
+		}
 		taskUpdated := tasks.UpdateById(database.Db, id, taskForm)
 		UIMessageText.Create(fmt.Sprintf("Task updated: %s\n", taskUpdated.Name))
 	}
@@ -85,11 +93,11 @@ func CompletedTask() FnCobra {
 		id := utils.Must(strconv.Atoi(args[0]))
 		task := tasks.GetById(database.Db, id)
 		if task == nil {
-			UIMessageText.Create(fmt.Sprintf("Task not found\n"))
+			UIMessageText.Create(fmt.Sprint("Task not found\n"))
 			return
 		}
 		task.Completed = true
-		taskUpdated := tasks.UpdateById(database.Db, id, *task)
+		taskUpdated := tasks.UpdateById(database.Db, id, task)
 		UIMessageText.Create(fmt.Sprintf("Task completed: %s\n", taskUpdated.Name))
 	}
 }
@@ -99,7 +107,7 @@ func DeleteTask() FnCobra {
 		id := utils.Must(strconv.Atoi(args[0]))
 		task := tasks.GetById(database.Db, id)
 		if task == nil {
-			UIMessageText.Create(fmt.Sprintf("Task not found\n"))
+			UIMessageText.Create(fmt.Sprint("Task not found\n"))
 			return
 		}
 		tasks.DeleteById(database.Db, id)

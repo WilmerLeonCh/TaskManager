@@ -10,10 +10,10 @@ type MTask struct {
 	Completed   bool
 }
 
-func Add(db *gorm.DB, task MTask) *MTask {
+func Add(db *gorm.DB, task *MTask) *MTask {
 	task.Completed = false
 	db.Create(&task)
-	return &task
+	return task
 }
 
 func GetAll(db *gorm.DB) []MTask {
@@ -44,8 +44,8 @@ func DeleteById(db *gorm.DB, id int) {
 	}
 }
 
-func UpdateById(db *gorm.DB, id int, task MTask) *MTask {
-	var taskToUpdate MTask
+func UpdateById(db *gorm.DB, id int, task *MTask) *MTask {
+	var taskToUpdate *MTask
 	// verify if the task exists
 	existTask := db.First(&taskToUpdate, id)
 	if existTask.Error != nil {
@@ -56,5 +56,5 @@ func UpdateById(db *gorm.DB, id int, task MTask) *MTask {
 	if resultSave.Error != nil {
 		panic(resultSave.Error)
 	}
-	return &taskToUpdate
+	return taskToUpdate
 }
